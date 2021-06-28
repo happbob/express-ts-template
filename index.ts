@@ -1,5 +1,5 @@
-import App from './src/app';
-import {createServer,Server} from "http";
+import App from './config/app';
+import {Server} from "http";
 
 const port: number = Number(process.env.PORT) || 3000;
 

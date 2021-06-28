@@ -2,8 +2,8 @@ import express,{Application} from "express";
 import compression from 'compression';
 import cors from 'cors';
 import methodOverride from 'method-override';
-import Logger from '../config/logger';
-import UserRoute from "./app/User/userRoute";
+import Logger from './logger';
+import UserRoute from "../src/app/User/userRoute";
 
 const App = function ():Application{
   const app: Application = express();
