@@ -1,58 +1,59 @@
 import pool from "../../../config/database";
-const { logger } = require("../../../config/winston");
 
-const userDao = require("./userDao");
+import * as userDao from "./userDao";
 
 // Provider: Read 비즈니스 로직 처리
 
-exports.retrieveUserList = async function (email:string) {
+const retrieveUserList = async function (email:string) {
   if (!email) {
-    const connection = await pool.getConnection(async (conn:any):PoolConnection => conn);
+    const connection = await (await pool).getConnection();
     const userListResult = await userDao.selectUser(connection);
-    connection.release();
+    await connection.release();
 
     return userListResult;
 
   } else {
-    const connection = await pool.getConnection(async (conn) => conn);
+    const connection = await (await pool).getConnection();
     const userListResult = await userDao.selectUserEmail(connection, email);
-    connection.release();
+    await connection.release();
 
     return userListResult;
   }
 };
 
-exports.retrieveUser = async function (userId) {
-  const connection = await pool.getConnection(async (conn) => conn);
+const retrieveUser = async function (userId: any) {
+  const connection = await (await pool).getConnection();
   const userResult = await userDao.selectUserId(connection, userId);
 
-  connection.release();
+  await connection.release();
 
-  return userResult[0];
+  return userResult;
 };
 
-exports.emailCheck = async function (email) {
-  const connection = await pool.getConnection(async (conn) => conn);
+const emailCheck = async function (email: any) {
+  const connection = await (await pool).getConnection();
   const emailCheckResult = await userDao.selectUserEmail(connection, email);
-  connection.release();
+  await connection.release();
 
   return emailCheckResult;
 };
 
-exports.passwordCheck = async function (selectUserPasswordParams) {
-  const connection = await pool.getConnection(async (conn) => conn);
+const passwordCheck = async function (selectUserPasswordParams: any) {
+  const connection = await (await pool).getConnection();
   const passwordCheckResult = await userDao.selectUserPassword(
       connection,
       selectUserPasswordParams
   );
-  connection.release();
-  return passwordCheckResult[0];
+  await connection.release();
+  return passwordCheckResult;
 };
 
-exports.accountCheck = async function (email) {
-  const connection = await pool.getConnection(async (conn) => conn);
+const accountCheck = async function (email: any) {
+  const connection = await (await pool).getConnection();
   const userAccountResult = await userDao.selectUserAccount(connection, email);
-  connection.release();
+  await connection.release();
 
   return userAccountResult;
 };
+
+export {accountCheck, passwordCheck, emailCheck, retrieveUser, retrieveUserList}

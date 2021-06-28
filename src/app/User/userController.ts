@@ -1,10 +1,10 @@
 import { Request, Response } from "express";
 
-const jwtMiddleware = require("../../../config/jwtMiddleware");
-const userProvider = require("../../app/User/userProvider");
-const userService = require("../../app/User/userService");
+import jwtMiddleware from "../../../config/jwtMiddleware";
+import * as userProvider from "../../app/User/userProvider";
+import * as userService from "../../app/User/userService";
 import ResponseMessage from "../../../config/baseResponseStatus";
-const {response, errResponse} = require("../../../config/response");
+import {response} from "../../../config/response";
 
 const regexEmail = require("regex-email");
 const {emit} = require("nodemon");
@@ -72,11 +72,11 @@ const postUsers = async function (req: Request, res: Response) {
     /**
      * Query String: email
      */
-    const email = req.query.email;
+    const email:string = req.query.email as string;
 
     if (!email) {
         // 유저 전체 조회
-        const userListResult = await userProvider.retrieveUserList();
+        const userListResult = await userProvider.retrieveUserList(email);
         return res.send(response(ResponseMessage.SUCCESS, userListResult));
     } else {
         // 유저 검색 조회
@@ -97,7 +97,7 @@ const postUsers = async function (req: Request, res: Response) {
      */
     const userId = req.params.userId;
 
-    if (!userId) return res.send(errResponse(ResponseMessage.USER_USERID_EMPTY));
+    if (!userId) return res.send(response(ResponseMessage.USER_USERID_EMPTY));
 
     const userByUserId = await userProvider.retrieveUser(userId);
     return res.send(response(ResponseMessage.SUCCESS, userByUserId));
@@ -140,9 +140,9 @@ const patchUsers = async function (req: Request, res: Response) {
     const nickname = req.body.nickname;
 
     if (userIdFromJWT != userId) {
-        res.send(errResponse(ResponseMessage.USER_ID_NOT_MATCH));
+        res.send(response(ResponseMessage.USER_ID_NOT_MATCH));
     } else {
-        if (!nickname) return res.send(errResponse(ResponseMessage.USER_NICKNAME_EMPTY));
+        if (!nickname) return res.send(response(ResponseMessage.USER_NICKNAME_EMPTY));
 
         const editUserInfo = await userService.editUser(userId, nickname)
         return res.send(editUserInfo);
@@ -163,9 +163,10 @@ const patchUsers = async function (req: Request, res: Response) {
  * [GET] /app/auto-login
  */
  const check = async function (req:Request, res:Response) {
-    const userIdResult = req.verifiedToken.userId;
+    const userIdResult = req.verifiedToken.userIdx;
+    const verifiedToken = req.verifiedToken;
     console.log(userIdResult);
-    return res.send(response(ResponseMessage.TOKEN_VERIFICATION_SUCCESS));
+    return res.send(response(ResponseMessage.TOKEN_VERIFICATION_SUCCESS,verifiedToken));
 };
 
 export {getTest, postUsers,getUsers,getUserById,patchUsers, login, check}

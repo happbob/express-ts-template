@@ -1,12 +1,12 @@
 import express from "express";
 import * as user from './userController';
-
+import jwtMiddleware from "../../../config/jwtMiddleware";
 const UserRoute = function(app:express.Application){
     
-    const jwtMiddleware = require('../../../config/jwtMiddleware');
+    // const jwtMiddleware = require('../../../config/jwtMiddleware');
 
     // 0. 테스트 API
-    app.get('/app/test', user.getTest)
+    app.route('/app/test').get(user.getTest);
 
     // 1. 유저 생성 (회원가입) API
     app.route('/app/users').post(user.postUsers);
@@ -23,15 +23,16 @@ const UserRoute = function(app:express.Application){
     app.post('/app/login', user.login);
 
     // 회원 정보 수정 API (JWT 검증 및 Validation - 메소드 체이닝 방식으로 jwtMiddleware 사용)
-    app.patch('/app/users/:userId', jwtMiddleware, user.patchUsers)
+    // app.patch('/app/users/:userId', jwtMiddleware, user.patchUsers)
+
+    // TODO: 자동로그인 API (JWT 검증 및 Payload 내뱉기)
+    // JWT 검증 API
+    app.get('/app/auto-login', jwtMiddleware, user.check);
+
+    // TODO: 탈퇴하기 API
+
 
 
 };
 
 export default UserRoute;
-
-// TODO: 자동로그인 API (JWT 검증 및 Payload 내뱉기)
-// JWT 검증 API
-// app.get('/app/auto-login', jwtMiddleware, user.check);
-
-// TODO: 탈퇴하기 API

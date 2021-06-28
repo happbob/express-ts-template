@@ -1,13 +1,16 @@
-import mysql, { Pool } from 'mysql2/promise';
-import Logger from './logger';
+import promiseMysql from 'promise-mysql';
+// import promiseMysql from 'mysql2';
+import * as dotenv from 'dotenv';
+
+dotenv.config();
 
 // TODO: 본인의 DB 계정 입력
-const pool: Pool = mysql.createPool({
-    host: 'gigl.c6aam9bsw8mj.ap-northeast-2.rds.amazonaws.com',
-    user: 'admin',
-    port: 3306,
-    password: 'hyunbin7231',
-    database: ''
+
+const pool = promiseMysql.createPool({
+    host: process.env.MYSQL_HOST,
+    user: process.env.MYSQL_USER,
+    password: process.env.MYSQL_PASSWORD,
+    database: process.env.MYSQL_DB
 });
 
 export default pool;

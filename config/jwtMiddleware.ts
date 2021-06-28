@@ -42,4 +42,4 @@ const jwtMiddleware = (req:Request, res:Response, next:NextFunction) => {
     }).catch(onError)
 };
 
-module.exports = jwtMiddleware;
+export default jwtMiddleware;
