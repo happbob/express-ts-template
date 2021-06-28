@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon --exec ts-node index.ts --dev",
+    "start": "npm link typescript && nodemon --exec ts-node index.ts --dev",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
