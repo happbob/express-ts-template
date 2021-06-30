@@ -5,17 +5,15 @@ import * as userProvider from "../../app/User/userProvider";
 import * as userService from "../../app/User/userService";
 import ResponseMessage from "../../../config/baseResponseStatus";
 import {response} from "../../../config/response";
+import {emailRegex} from "types-regex";
 
-const regexEmail = require("regex-email");
-const {emit} = require("nodemon");
-
-declare global {
-    namespace Express {
-      interface Request {
-        verifiedToken: any
-      }
-    }
-  }
+// declare global {
+//     namespace Express {
+//       interface Request {
+//         verifiedToken: any
+//       }
+//     }
+//   }
 
 /**
  * API No. 0
@@ -47,7 +45,7 @@ const postUsers = async function (req: Request, res: Response) {
         return res.send(response(ResponseMessage.SIGNUP_EMAIL_LENGTH));
 
     // 형식 체크 (by 정규표현식)
-    if (!regexEmail.test(email))
+    if (!emailRegex.test(email))
         return res.send(response(ResponseMessage.SIGNUP_EMAIL_ERROR_TYPE));
 
     // 기타 등등 - 추가하기

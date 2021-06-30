@@ -1,10 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 ;
-var setMessage = function (isSuccess, code, message) {
+const setMessage = (isSuccess, code, message) => {
     return { isSuccess: isSuccess, code: code, message: message };
 };
-var ResponseMessage = {
+const ResponseMessage = {
     // Success
     SUCCESS: { "isSuccess": true, "code": 1000, "message": "성공" },
     // Common

@@ -18,12 +18,16 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-var user = __importStar(require("./userController"));
-var UserRoute = function (app) {
-    var jwtMiddleware = require('../../../config/jwtMiddleware');
+const user = __importStar(require("./userController"));
+const jwtMiddleware_1 = __importDefault(require("../../../config/jwtMiddleware"));
+const UserRoute = function (app) {
+    // const jwtMiddleware = require('../../../config/jwtMiddleware');
     // 0. 테스트 API
-    app.get('/app/test', user.getTest);
+    app.route('/app/test').get(user.getTest);
     // 1. 유저 생성 (회원가입) API
     app.route('/app/users').post(user.postUsers);
     // 2. 유저 조회 API (+ 검색)
@@ -34,11 +38,11 @@ var UserRoute = function (app) {
     // 로그인 하기 API (JWT 생성)
     app.post('/app/login', user.login);
     // 회원 정보 수정 API (JWT 검증 및 Validation - 메소드 체이닝 방식으로 jwtMiddleware 사용)
-    app.patch('/app/users/:userId', jwtMiddleware, user.patchUsers);
+    // app.patch('/app/users/:userId', jwtMiddleware, user.patchUsers)
+    // TODO: 자동로그인 API (JWT 검증 및 Payload 내뱉기)
+    // JWT 검증 API
+    app.get('/app/auto-login', jwtMiddleware_1.default, user.check);
+    // TODO: 탈퇴하기 API
 };
 exports.default = UserRoute;
-// TODO: 자동로그인 API (JWT 검증 및 Payload 내뱉기)
-// JWT 검증 API
-// app.get('/app/auto-login', jwtMiddleware, user.check);
-// TODO: 탈퇴하기 API
 //# sourceMappingURL=userRoute.js.map

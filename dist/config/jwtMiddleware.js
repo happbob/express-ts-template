@@ -22,35 +22,42 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var jwt = __importStar(require("jsonwebtoken"));
-var secret_1 = require("./secret");
-var response_1 = require("./response");
-var baseResponseStatus_1 = __importDefault(require("./baseResponseStatus"));
-var jwtMiddleware = function (req, res, next) {
+const jwt = __importStar(require("jsonwebtoken"));
+const secret_1 = require("./secret");
+const response_1 = require("./response");
+const baseResponseStatus_1 = __importDefault(require("./baseResponseStatus"));
+// declare global {
+//     namespace Express {
+//       interface Request {
+//         verifiedToken: any
+//       }
+//     }
+//   }
+const jwtMiddleware = (req, res, next) => {
     // read the token from header or url
-    var token = req.headers['x-access-token'] || req.query.token;
+    const token = req.headers['x-access-token'] || req.query.token;
     // token does not exist
     if (!token) {
         return res.send(response_1.response(baseResponseStatus_1.default.TOKEN_EMPTY));
     }
     // create a promise that decodes the token
-    var p = new Promise(function (resolve, reject) {
-        jwt.verify(token, secret_1.secret_config.secret, function (err, verifiedToken) {
+    const p = new Promise((resolve, reject) => {
+        jwt.verify(token, secret_1.secret_config.secret, (err, verifiedToken) => {
             if (err)
                 reject(err);
             resolve(verifiedToken);
         });
     });
     // if it has failed to verify, it will return an error message
-    var onError = function (error) {
+    const onError = (error) => {
         return res.send(response_1.response(baseResponseStatus_1.default.TOKEN_VERIFICATION_FAILURE));
     };
     // process the promise
-    p.then(function (verifiedToken) {
+    p.then((verifiedToken) => {
         //비밀 번호 바뀌었을 때 검증 부분 추가 할 곳
         req.verifiedToken = verifiedToken;
         next();
     }).catch(onError);
 };
-module.exports = jwtMiddleware;
+exports.default = jwtMiddleware;
 //# sourceMappingURL=jwtMiddleware.js.map
