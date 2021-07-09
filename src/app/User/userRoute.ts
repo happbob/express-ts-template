@@ -1,7 +1,7 @@
-import express from "express";
+import {Application} from "express";
 import * as user from './userController';
 import jwtMiddleware from "../../../config/jwtMiddleware";
-const UserRoute = function(app:express.Application){
+const UserRoute = function(app:Application){
     
     // const jwtMiddleware = require('../../../config/jwtMiddleware');
 

@@ -4,14 +4,6 @@ import { response } from './response';
 import ResponseMessage from './baseResponseStatus';
 import { NextFunction,Request, Response } from 'express';
 
-// declare global {
-//     namespace Express {
-//       interface Request {
-//         verifiedToken: any
-//       }
-//     }
-//   }
-
 const jwtMiddleware = (req:Request, res:Response, next:NextFunction) => {
     // read the token from header or url
     const token:string = req.headers['x-access-token'] as string || req.query.token as string;

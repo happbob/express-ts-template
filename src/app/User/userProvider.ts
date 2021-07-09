@@ -1,41 +1,70 @@
 import pool from "../../../config/database";
-
+import Logger from "../../../config/logger";
+import {response} from "../../../config/response";
 import * as userDao from "./userDao";
-
+import baseResponse from "../../../config/baseResponseStatus";
 // Provider: Read 비즈니스 로직 처리
 
 const retrieveUserList = async function (email:string) {
-  if (!email) {
+  try {
     const connection = await (await pool).getConnection();
-    const userListResult = await userDao.selectUser(connection);
-    await connection.release();
-
-    return userListResult;
-
-  } else {
-    const connection = await (await pool).getConnection();
-    const userListResult = await userDao.selectUserEmail(connection, email);
-    await connection.release();
-
-    return userListResult;
+    try {
+      if (!email) {
+        const userListResult = await userDao.selectUser(connection);
+        await connection.release();
+        
+        return userListResult;
+      } else {
+        const userListResult = await userDao.selectUserEmail(connection, email);
+        await connection.release();
+    
+        return userListResult;
+      }
+    } catch (err) {
+      Logger.error(`App - retrieve user list provider Query error\n: ${err.message} \n ${err}`);
+      return response(baseResponse.QUERY_ERROR);
+    }
+  } catch (err) {
+    Logger.error(`App - retrieve user list provider DB error\n: ${err.message} \n ${err}`);
+    return response(baseResponse.DB_ERROR);
   }
 };
 
-const retrieveUser = async function (userId: any) {
-  const connection = await (await pool).getConnection();
-  const userResult = await userDao.selectUserId(connection, userId);
+const retrieveUser = async function (userId: number) {
+  try {
+    const connection = await (await pool).getConnection();
+    try {
+      const userResult = await userDao.selectUserId(connection, userId);
 
-  await connection.release();
-
-  return userResult;
+      await connection.release();
+    
+      return userResult;   
+    } catch (err) {
+      Logger.error(`App - retrieve user provider Query error\n: ${err.message} \n ${err}`);
+      return response(baseResponse.QUERY_ERROR);
+    }
+  } catch (err) {
+      Logger.error(`App - retrieve user provider DB error\n: ${err.message} \n ${err}`);
+      return response(baseResponse.DB_ERROR);
+  }
 };
 
 const emailCheck = async function (email: any) {
-  const connection = await (await pool).getConnection();
-  const emailCheckResult = await userDao.selectUserEmail(connection, email);
-  await connection.release();
+  try {
+    const connection = await (await pool).getConnection();  
+    try {
+      const emailCheckResult = await userDao.selectUserEmail(connection, email);
+      await connection.release();
 
-  return emailCheckResult;
+      return emailCheckResult;  
+    } catch (err) {
+      Logger.error(`App - email check provider Query error\n: ${err.message} \n ${err}`);
+      return response(baseResponse.QUERY_ERROR);
+    }
+  } catch (err) {
+    Logger.error(`App - email check provider DB error\n: ${err.message} \n ${err}`);
+      return response(baseResponse.DB_ERROR);
+  }
 };
 
 const passwordCheck = async function (selectUserPasswordParams: any) {

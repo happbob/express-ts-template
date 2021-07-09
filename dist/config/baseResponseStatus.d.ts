@@ -154,5 +154,10 @@ declare const ResponseMessage: {
         code: number;
         message: string;
     };
+    QUERY_ERROR: {
+        isSuccess: boolean;
+        code: number;
+        message: string;
+    };
 };
 export default ResponseMessage;

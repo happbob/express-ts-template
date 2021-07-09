@@ -9,42 +9,47 @@ import {response} from "../../../config/response";
 
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
-import Connection from "mysql2/typings/mysql/lib/Connection";
 
 // Service: Create, Update, Delete 비즈니스 로직 처리
-let connection:any;
 const createUser = async function (email:string, password:string, nickname:string) {
     try {
-        
-        // 이메일 중복 확인
-        const emailRows = await userProvider.emailCheck(email);
-        if (emailRows.length > 0)
-            return response(baseResponse.SIGNUP_REDUNDANT_EMAIL);
-
-        // 비밀번호 암호화
-        const hashedPassword = await crypto
-            .createHash("sha512")
-            .update(password)
-            .digest("hex");
-
-        const insertUserInfoParams = [email, hashedPassword, nickname];
-        connection = await (await pool).getConnection();
+        const connection = await (await pool).getConnection();
         // 트랜잭션 처리
         await connection.beginTransaction();
-
-        // 유저 생성
-        await userDao.insertUserInfo(connection, insertUserInfoParams);
-
-        // DB 트랜잭션 Commit
-        await connection.commit();
-        await connection.release();
-        return response(baseResponse.SUCCESS);
-
-    } catch (err) {
-        connection.rollback();
-        Logger.error(`App - createUser Service error\n: ${err.message} \n ${err}`);
+        try {
+        
+            // 이메일 중복 확인
+            const emailRows = await userProvider.emailCheck(email);
+            if (emailRows.length > 0)
+                return response(baseResponse.SIGNUP_REDUNDANT_EMAIL);
+    
+            // 비밀번호 암호화
+            const hashedPassword = await crypto
+                .createHash("sha512")
+                .update(password)
+                .digest("hex");
+    
+            const insertUserInfoParams = [email, hashedPassword, nickname];
+            
+            
+    
+            // 유저 생성
+            await userDao.insertUserInfo(connection, insertUserInfoParams);
+    
+            // DB 트랜잭션 Commit
+            await connection.commit();
+            await connection.release();
+            return response(baseResponse.SUCCESS);
+    
+        } catch (err) {
+            connection.rollback();
+            Logger.error(`App - createUser Service Query error\n: ${err.message} \n ${err}`);
+            return response(baseResponse.QUERY_ERROR);
+        }
+    } catch(err) {
+        Logger.error(`App - createUser Service DB error\n: ${err.message} \n ${err}`);
         return response(baseResponse.DB_ERROR);
-    };
+    }
 };
 
 
@@ -105,27 +110,25 @@ const postSignIn = async function (email:string, password:string) {
 
 const editUser = async function (id:string, nickname:string) {
     try {
-        console.log(id)
         const connection = await (await pool).getConnection();
-        (fn:any) => async (...args: any) => {
-            /* DB 커넥션을 한다. */
-            const con: any = await (await pool).getConnection();
-            /* 로직에 con과 args(넘겨받은 paramter)를 넘겨준다. */
-            const editUserResult = await userDao.updateUserInfo(con, id, nickname)
-            /* con을 닫아준다. */
-            console.log(`추가된 회원 : ${editUserResult}`)
-            con.release();
+        try {
+            console.log(id)
+            const editUserResult = await userDao.updateUserInfo(connection, id, nickname);
+            console.log(`추가된 회원 : ${editUserResult}`);
+            
+            connection.release();
+    
             return response(baseResponse.SUCCESS);
-        };
-        
-        connection.release();
 
-        return response(baseResponse.SUCCESS);
-
+        } catch (err) {
+            Logger.error(`App - editUser Service Query error\n: ${err.message}`);
+            return response(baseResponse.QUERY_ERROR);
+        }
     } catch (err) {
-        Logger.error(`App - editUser Service error\n: ${err.message}`);
+        Logger.error(`App - editUser Service DB error\n: ${err.message}`);
         return response(baseResponse.DB_ERROR);
     }
+    
 }
 
 export {createUser, postSignIn, editUser}

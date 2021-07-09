@@ -1,19 +1,11 @@
 import { Request, Response } from "express";
 
-import jwtMiddleware from "../../../config/jwtMiddleware";
-import * as userProvider from "../../app/User/userProvider";
-import * as userService from "../../app/User/userService";
+import { postUserDto } from "./userTypes";
+import * as userProvider from "./userProvider";
+import * as userService from "./userService";
 import ResponseMessage from "../../../config/baseResponseStatus";
 import {response} from "../../../config/response";
 import {emailRegex} from "types-regex";
-
-// declare global {
-//     namespace Express {
-//       interface Request {
-//         verifiedToken: any
-//       }
-//     }
-//   }
 
 /**
  * API No. 0
@@ -34,7 +26,7 @@ const postUsers = async function (req: Request, res: Response) {
     /**
      * Body: email, password, nickname
      */
-    const {email, password, nickname} = req.body;
+    const {email,password, nickname}:postUserDto = req.body;
 
     // 빈 값 체크
     if (!email)
@@ -93,7 +85,8 @@ const postUsers = async function (req: Request, res: Response) {
     /**
      * Path Variable: userId
      */
-    const userId = req.params.userId;
+    const userId = parseInt(req.params.userId);
+
 
     if (!userId) return res.send(response(ResponseMessage.USER_USERID_EMPTY));
 

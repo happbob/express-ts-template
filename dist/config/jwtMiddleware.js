@@ -26,13 +26,6 @@ const jwt = __importStar(require("jsonwebtoken"));
 const secret_1 = require("./secret");
 const response_1 = require("./response");
 const baseResponseStatus_1 = __importDefault(require("./baseResponseStatus"));
-// declare global {
-//     namespace Express {
-//       interface Request {
-//         verifiedToken: any
-//       }
-//     }
-//   }
 const jwtMiddleware = (req, res, next) => {
     // read the token from header or url
     const token = req.headers['x-access-token'] || req.query.token;
