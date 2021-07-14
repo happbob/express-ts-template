@@ -159,5 +159,10 @@ declare const ResponseMessage: {
         code: number;
         message: string;
     };
+    VALIDATION_ERROR: {
+        isSuccess: boolean;
+        code: number;
+        message: string;
+    };
 };
 export default ResponseMessage;

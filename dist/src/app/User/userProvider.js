@@ -110,19 +110,43 @@ const emailCheck = function (email) {
 exports.emailCheck = emailCheck;
 const passwordCheck = function (selectUserPasswordParams) {
     return __awaiter(this, void 0, void 0, function* () {
-        const connection = yield (yield database_1.default).getConnection();
-        const passwordCheckResult = yield userDao.selectUserPassword(connection, selectUserPasswordParams);
-        yield connection.release();
-        return passwordCheckResult;
+        try {
+            const connection = yield (yield database_1.default).getConnection();
+            try {
+                const passwordCheckResult = yield userDao.selectUserPassword(connection, selectUserPasswordParams);
+                yield connection.release();
+                return passwordCheckResult;
+            }
+            catch (err) {
+                logger_1.default.error(`App - password check provider Query error\n: ${err.message} \n ${err}`);
+                return response_1.response(baseResponseStatus_1.default.QUERY_ERROR);
+            }
+        }
+        catch (err) {
+            logger_1.default.error(`App - password check provider DB error\n: ${err.message} \n ${err}`);
+            return response_1.response(baseResponseStatus_1.default.DB_ERROR);
+        }
     });
 };
 exports.passwordCheck = passwordCheck;
 const accountCheck = function (email) {
     return __awaiter(this, void 0, void 0, function* () {
-        const connection = yield (yield database_1.default).getConnection();
-        const userAccountResult = yield userDao.selectUserAccount(connection, email);
-        yield connection.release();
-        return userAccountResult;
+        try {
+            const connection = yield (yield database_1.default).getConnection();
+            try {
+                const userAccountResult = yield userDao.selectUserAccount(connection, email);
+                yield connection.release();
+                return userAccountResult;
+            }
+            catch (err) {
+                logger_1.default.error(`App - account check provider Query error\n: ${err.message} \n ${err}`);
+                return response_1.response(baseResponseStatus_1.default.QUERY_ERROR);
+            }
+        }
+        catch (err) {
+            logger_1.default.error(`App - account check provider DB error\n: ${err.message} \n ${err}`);
+            return response_1.response(baseResponseStatus_1.default.DB_ERROR);
+        }
     });
 };
 exports.accountCheck = accountCheck;

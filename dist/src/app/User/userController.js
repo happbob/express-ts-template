@@ -32,11 +32,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.check = exports.login = exports.patchUsers = exports.getUserById = exports.getUsers = exports.postUsers = exports.getTest = void 0;
+const userTypes_1 = require("./userTypes");
 const userProvider = __importStar(require("./userProvider"));
 const userService = __importStar(require("./userService"));
 const baseResponseStatus_1 = __importDefault(require("../../../config/baseResponseStatus"));
 const response_1 = require("../../../config/response");
-const types_regex_1 = require("types-regex");
+const class_validator_1 = require("class-validator");
+const logger_1 = __importDefault(require("../../../config/logger"));
 /**
  * API No. 0
  * API Name : 테스트 API
@@ -58,18 +60,17 @@ const postUsers = function (req, res) {
         /**
          * Body: email, password, nickname
          */
-        const { email, password, nickname } = req.body;
-        // 빈 값 체크
-        if (!email)
-            return res.send(response_1.response(baseResponseStatus_1.default.SIGNUP_EMAIL_EMPTY));
-        // 길이 체크
-        if (email.length > 30)
-            return res.send(response_1.response(baseResponseStatus_1.default.SIGNUP_EMAIL_LENGTH));
-        // 형식 체크 (by 정규표현식)
-        if (!types_regex_1.emailRegex.test(email))
-            return res.send(response_1.response(baseResponseStatus_1.default.SIGNUP_EMAIL_ERROR_TYPE));
-        // 기타 등등 - 추가하기
-        const signUpResponse = yield userService.createUser(email, password, nickname);
+        const request = req.body;
+        const body = new userTypes_1.postUserDto(request);
+        const errors = yield class_validator_1.validate(body);
+        if (errors.length > 0) {
+            logger_1.default.error(`App - postSignIn Service error\n: ${errors[0]} \n ${JSON.stringify(errors[0].constraints)}`);
+            return res.send(response_1.response(baseResponseStatus_1.default.VALIDATION_ERROR));
+        }
+        else {
+            console.log('validation succeed');
+        }
+        const signUpResponse = yield userService.createUser(body.email, body.password, body.nickname);
         return res.send(signUpResponse);
     });
 };

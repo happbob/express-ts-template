@@ -68,21 +68,42 @@ const emailCheck = async function (email: any) {
 };
 
 const passwordCheck = async function (selectUserPasswordParams: any) {
-  const connection = await (await pool).getConnection();
-  const passwordCheckResult = await userDao.selectUserPassword(
-      connection,
-      selectUserPasswordParams
-  );
-  await connection.release();
-  return passwordCheckResult;
+  try {
+    const connection = await (await pool).getConnection();
+    try {
+      
+      const passwordCheckResult = await userDao.selectUserPassword(
+          connection,
+          selectUserPasswordParams
+      );
+      await connection.release();
+      return passwordCheckResult;
+    } catch (err) {
+      Logger.error(`App - password check provider Query error\n: ${err.message} \n ${err}`);
+      return response(baseResponse.QUERY_ERROR);
+    }
+  } catch (err) {
+    Logger.error(`App - password check provider DB error\n: ${err.message} \n ${err}`);
+    return response(baseResponse.DB_ERROR);
+  }
 };
 
 const accountCheck = async function (email: any) {
-  const connection = await (await pool).getConnection();
-  const userAccountResult = await userDao.selectUserAccount(connection, email);
-  await connection.release();
+  try {
+    const connection = await (await pool).getConnection();
+    try {      
+      const userAccountResult = await userDao.selectUserAccount(connection, email);
+      await connection.release();
 
-  return userAccountResult;
+      return userAccountResult;
+    } catch (err) {
+      Logger.error(`App - account check provider Query error\n: ${err.message} \n ${err}`);
+      return response(baseResponse.QUERY_ERROR);
+    }
+  } catch (err) {
+    Logger.error(`App - account check provider DB error\n: ${err.message} \n ${err}`);
+    return response(baseResponse.DB_ERROR);
+  }
 };
 
 export {accountCheck, passwordCheck, emailCheck, retrieveUser, retrieveUserList}

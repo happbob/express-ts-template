@@ -6,6 +6,8 @@ import * as userService from "./userService";
 import ResponseMessage from "../../../config/baseResponseStatus";
 import {response} from "../../../config/response";
 import {emailRegex} from "types-regex";
+import { validate, ValidationError } from "class-validator";
+import Logger from "../../../config/logger";
 
 /**
  * API No. 0
@@ -26,27 +28,22 @@ const postUsers = async function (req: Request, res: Response) {
     /**
      * Body: email, password, nickname
      */
-    const {email,password, nickname}:postUserDto = req.body;
-
-    // 빈 값 체크
-    if (!email)
-        return res.send(response(ResponseMessage.SIGNUP_EMAIL_EMPTY));
-
-    // 길이 체크
-    if (email.length > 30)
-        return res.send(response(ResponseMessage.SIGNUP_EMAIL_LENGTH));
-
-    // 형식 체크 (by 정규표현식)
-    if (!emailRegex.test(email))
-        return res.send(response(ResponseMessage.SIGNUP_EMAIL_ERROR_TYPE));
-
-    // 기타 등등 - 추가하기
+    const request = req.body;
+    const body = new postUserDto(request);
+    const errors: ValidationError[] = await validate(body);
+    
+    if (errors.length > 0) {
+        Logger.error(`App - postSignIn Service error\n: ${errors[0]} \n ${JSON.stringify(errors[0].constraints)}`);
+        return res.send(response(ResponseMessage.VALIDATION_ERROR));
+    } else {
+        console.log('validation succeed');
+    }
 
 
     const signUpResponse = await userService.createUser(
-        email,
-        password,
-        nickname
+        body.email,
+        body.password,
+        body.nickname
     );
 
     return res.send(signUpResponse);

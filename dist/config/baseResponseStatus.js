@@ -40,7 +40,8 @@ const ResponseMessage = {
     //Connection, Transaction 등의 서버 오류
     DB_ERROR: { "isSuccess": false, "code": 4000, "message": "데이터 베이스 에러" },
     SERVER_ERROR: { "isSuccess": false, "code": 4001, "message": "서버 에러" },
-    QUERY_ERROR: { "isSuccess": false, "code": 4002, "message": "데이터 베이스 쿼리 에러" }
+    QUERY_ERROR: { "isSuccess": false, "code": 4002, "message": "데이터 베이스 쿼리 에러" },
+    VALIDATION_ERROR: { "isSuccess": false, "code": 4003, "message": "validation 에러" }
 };
 exports.default = ResponseMessage;
 //# sourceMappingURL=baseResponseStatus.js.map
