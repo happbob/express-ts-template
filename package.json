@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "tsc-watch --project . --outDir ./dist --onSuccess \"nodemon ./dist/index.js\"",
+    "start": "npm link typescript & tsc-watch --project . --outDir ./dist --onSuccess \"nodemon ./dist/index.js\"",
     "build": "tsc -p ."
   },
   "author": "",

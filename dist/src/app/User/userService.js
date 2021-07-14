@@ -64,6 +64,7 @@ const createUser = function (email, password, nickname) {
                 // DB 트랜잭션 Commit
                 yield connection.commit();
                 yield connection.release();
+                logger_1.default.info(`App - email : ${email} posted user`);
                 return response_1.response(baseResponseStatus_1.default.SUCCESS);
             }
             catch (err) {

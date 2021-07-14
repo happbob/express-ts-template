@@ -63,6 +63,7 @@ const postUsers = function (req, res) {
         const request = req.body;
         const body = new userTypes_1.postUserDto(request);
         const errors = yield class_validator_1.validate(body);
+        logger_1.default.info(`App - email : ${req.body.email} trying post user`);
         if (errors.length > 0) {
             logger_1.default.error(`App - postSignIn Service error\n: ${errors[0]} \n ${JSON.stringify(errors[0].constraints)}`);
             return res.send(response_1.response(baseResponseStatus_1.default.VALIDATION_ERROR));

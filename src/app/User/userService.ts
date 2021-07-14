@@ -39,6 +39,7 @@ const createUser = async function (email:string, password:string, nickname:strin
             // DB 트랜잭션 Commit
             await connection.commit();
             await connection.release();
+            Logger.info(`App - email : ${email} posted user`);
             return response(baseResponse.SUCCESS);
     
         } catch (err) {

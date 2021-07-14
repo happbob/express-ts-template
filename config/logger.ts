@@ -6,10 +6,7 @@ const logDir = "logs/";
 // see or hide levels based on the running ENV.
 const levels = {
   error: 0,
-  warn: 1,
-  info: 2,
-  http: 3,
-  debug: 4,
+  info: 1
 }
 
 // This method set the current severity based on 
@@ -72,24 +69,7 @@ const transports = [
     maxFiles: 30,
     zippedArchive: true,
   }),
-  // debug 레벨 로그를 저장할 파일 설정
-  new winstonDaily({
-    level: 'debug',
-    datePattern: 'YYYY-MM-DD',
-    dirname: logDir + '/debug',
-    filename: `%DATE%.debug.log`,
-    maxFiles: 30,  // 30일치 로그 파일 저장
-    zippedArchive: true, 
-  }),
-  // http 레벨 로그를 저장할 파일 설정
-  new winstonDaily({
-    level: 'http',
-    datePattern: 'YYYY-MM-DD',
-    dirname: logDir + '/http',
-    filename: `%DATE%.http.log`,
-    maxFiles: 30,  // 30일치 로그 파일 저장
-    zippedArchive: true, 
-  }),
+
   // Allow the use the console to print the messages
   new winston.transports.Console(),
 ]

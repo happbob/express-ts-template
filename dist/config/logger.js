@@ -11,10 +11,7 @@ const logDir = "logs/";
 // see or hide levels based on the running ENV.
 const levels = {
     error: 0,
-    warn: 1,
-    info: 2,
-    http: 3,
-    debug: 4,
+    info: 1
 };
 // This method set the current severity based on 
 // the current NODE_ENV: show all the log levels 
@@ -66,24 +63,6 @@ const transports = [
         datePattern: 'YYYY-MM-DD',
         dirname: logDir + '/error',
         filename: `%DATE%.error.log`,
-        maxFiles: 30,
-        zippedArchive: true,
-    }),
-    // debug 레벨 로그를 저장할 파일 설정
-    new winston_daily_rotate_file_1.default({
-        level: 'debug',
-        datePattern: 'YYYY-MM-DD',
-        dirname: logDir + '/debug',
-        filename: `%DATE%.debug.log`,
-        maxFiles: 30,
-        zippedArchive: true,
-    }),
-    // http 레벨 로그를 저장할 파일 설정
-    new winston_daily_rotate_file_1.default({
-        level: 'http',
-        datePattern: 'YYYY-MM-DD',
-        dirname: logDir + '/http',
-        filename: `%DATE%.http.log`,
         maxFiles: 30,
         zippedArchive: true,
     }),

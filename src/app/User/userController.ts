@@ -31,7 +31,7 @@ const postUsers = async function (req: Request, res: Response) {
     const request = req.body;
     const body = new postUserDto(request);
     const errors: ValidationError[] = await validate(body);
-    
+    Logger.info(`App - email : ${req.body.email} trying post user`);
     if (errors.length > 0) {
         Logger.error(`App - postSignIn Service error\n: ${errors[0]} \n ${JSON.stringify(errors[0].constraints)}`);
         return res.send(response(ResponseMessage.VALIDATION_ERROR));
@@ -45,7 +45,7 @@ const postUsers = async function (req: Request, res: Response) {
         body.password,
         body.nickname
     );
-
+        
     return res.send(signUpResponse);
 };
 
